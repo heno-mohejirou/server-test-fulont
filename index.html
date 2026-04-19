@@ -22,7 +22,10 @@ async function calc() {
     const res = await fetch("https://mwollfzzlbwxibtjdzmn.supabase.co/rest/v1/users", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "apikey": "sb_publishable__SYKhFuvfDcsHGITZ4wEIA_LZVOx_kX",
+            "Authorization": "Bearer sb_publishable__SYKhFuvfDcsHGITZ4wEIA_LZVOx_kX",
+            "Prefer": "return=representation"
         },
         body: JSON.stringify({
             username: username,
@@ -32,9 +35,11 @@ async function calc() {
 
     const data = await res.json();
 
-    if (data.username !== undefined) {
+    console.log(data);
+
+    if (Array.isArray(data)) {
         document.getElementById("result").innerText =
-            "結果: " + data.username + " / " + data.password;
+            "結果: " + data[0].username + " / " + data[0].password;
     } else {
         document.getElementById("result").innerText = data.error;
     }
