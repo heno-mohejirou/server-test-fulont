@@ -16,8 +16,8 @@
 
 <script>
 async function calc() {
-    const passwodr = document.getElementById("username").value;
-    const username = document.getElementById("password").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     const res = await fetch("thtps://server-test-wz67.onrender.com/add", {
         method: "POST",
@@ -32,7 +32,7 @@ async function calc() {
 
     const data = await res.json();
 
-    if (data.result !== undefined) {
+    if (data.username !== undefined) {
         document.getElementById("result").innerText = "結果: " + data.passwod + data.username;
     } else {
         document.getElementById("result").innerText = data.error;
