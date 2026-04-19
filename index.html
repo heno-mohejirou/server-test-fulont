@@ -19,7 +19,7 @@ async function calc() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev", {
+    const res = await fetch("https://mwollfzzlbwxibtjdzmn.supabase.co/rest/v1/users", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
