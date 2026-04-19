@@ -33,7 +33,7 @@ async function calc() {
     const data = await res.json();
 
     if (data.username !== undefined) {
-        document.getElementById("result").innerText = "結果: " + data.passwod + data.username;
+        document.getElementById("result").innerText = "結果: " + data.password + data.username;
     } else {
         document.getElementById("result").innerText = data.error;
     }
