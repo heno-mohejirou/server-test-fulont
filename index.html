@@ -34,9 +34,9 @@ async function calc() {
     const data = await res.json();
 
     if (data.result !== undefined) {
-        document.getElementById("result").innerText = "結果: " + data.result;
+        document.getElementById("result").innerText = "結果: " + data;
     } else {
-        document.getElementById("result").innerText = data.error;
+        document.getElementById("result").innerText = data;
     }
 }
 </script>
