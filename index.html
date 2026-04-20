@@ -2,15 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>足し算</title>
+    <title>パパイヤーヤパパーパパイヤ</title>
 </head>
 <body>
 
-<h2>足し算</h2>
+<h2>パパイヤーヤパパーパパイヤ</h2>
 
 <input type="text" id="username" placeholder="user">
 <input type="text" id="password" placeholder="pass">
-<button onclick="calc()">計算</button>
+<button onclick="calc()">送信</button>
 
 <h3 id="result"></h3>
 
@@ -36,7 +36,7 @@ async function calc() {
 
     if (Array.isArray(data) && data.length > 0) {
         document.getElementById("result").innerText =
-            "結果: " + data[0].username;
+            "結果: " + data[0].username + data[0].password;
     } else {
         document.getElementById("result").innerText = data.error || "失敗";
     }
