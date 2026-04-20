@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>足し算</title>
-</head>
-<body>
-
-<h2>足し算</h2>
-
-<input type="text" id="username" placeholder="user">
-<input type="text" id="password" placeholder="pass">
-<button onclick="calc()">計算</button>
-
-<h3 id="result"></h3>
-
 <script>
 async function calc() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch("https://mwollfzzlbwxibtjdzmn.supabase.co/rest/v1/users", {
+    const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            "apikey": "sb_publishable__SYKhFuvfDcsHGITZ4wEIA_LZVOx_kX",
-            "Authorization": "Bearer sb_publishable__SYKhFuvfDcsHGITZ4wEIA_LZVOx_kX",
-            "Prefer": "return=representation"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
             username: username,
@@ -37,14 +18,11 @@ async function calc() {
 
     console.log(data);
 
-    if (Array.isArray(data)) {
+    if (Array.isArray(data) && data.length > 0) {
         document.getElementById("result").innerText =
-            "結果: " + data[0].username + " / " + data[0].password;
+            "結果: " + data[0].username;
     } else {
-        document.getElementById("result").innerText = data.error;
+        document.getElementById("result").innerText = data.error || "失敗";
     }
 }
 </script>
-
-</body>
-</html>
