@@ -34,13 +34,21 @@ async function calc() {
 
     console.log(data);
 
-    if (Array.isArray(data) && data.length > 0) {
+    // ✅ 成功パターン
+    if (data.payment !== undefined) {
         document.getElementById("result").innerText =
-            "結果: " + data[0].username + data[0].password;
-    } else {
-        document.getElementById("result").innerText = data.error || "失敗";
+            "結果: " 
+            + data.username 
+            + " / payment: " 
+            + data.payment;
+    } 
+    // ❌ エラー
+    else {
+        document.getElementById("result").innerText =
+            data.error || "失敗";
     }
 }
+</script>
 </script>
 
 </body>
