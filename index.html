@@ -35,15 +35,13 @@ async function calc() {
     console.log(data);
 
     // ✅ 成功パターン
-    if (data.payment !== undefined) {
+    if (data.payment === true) {
+    document.getElementById("result").innerText =
+        "加工結果: " + data.result;
+    } else if (data.payment === false) {
         document.getElementById("result").innerText =
-            "結果: " 
-            + data.username 
-            + " / payment: " 
-            + data.payment;
-    } 
-    // ❌ エラー
-    else {
+            "無料ユーザーです";
+    } else {
         document.getElementById("result").innerText =
             data.error || "失敗";
     }
