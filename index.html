@@ -34,19 +34,16 @@ async function calc() {
 
     console.log(data);
 
-    // ✅ 成功パターン
+    // 🔥 ここを変更
     if (data.payment === true) {
-    document.getElementById("result").innerText =
-        "加工結果: " + data.result;
+        // 🔥 結果をURLに乗せて遷移
+        window.location.href = "/success.html?result=" + encodeURIComponent(data.result);
     } else if (data.payment === false) {
-        document.getElementById("result").innerText =
-            "無料ユーザーです";
+        window.location.href = "/free.html";
     } else {
-        document.getElementById("result").innerText =
-            data.error || "失敗";
+        window.location.href = "/error.html";
     }
 }
-</script>
 </script>
 
 </body>
