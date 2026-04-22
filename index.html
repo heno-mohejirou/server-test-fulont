@@ -34,6 +34,15 @@ async function send() {
   } else {
     location.href = "/error.html";
   }
+
+  console.log("送信開始");
+
+  const res = await fetch(...);
+
+  console.log("レスポンス受信");
+
+  const data = await res.json();
+  console.log("data:", data);
 }
 </script>
 
