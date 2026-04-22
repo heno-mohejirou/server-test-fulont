@@ -17,13 +17,18 @@ async function send() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
+  console.log("送信開始");
+
   const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev/api", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ username, password })
   });
 
+  console.log("レスポンス受信");
+
   const data = await res.json();
+  console.log("data:", data);
 
   if (data.status === "loading") {
     location.href = "/load.html?username=" + username;
@@ -34,15 +39,6 @@ async function send() {
   } else {
     location.href = "/error.html";
   }
-
-  console.log("送信開始");
-
-  const res = await fetch(...);
-
-  console.log("レスポンス受信");
-
-  const data = await res.json();
-  console.log("data:", data);
 }
 </script>
 
