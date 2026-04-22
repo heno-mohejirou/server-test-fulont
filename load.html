@@ -1,32 +1,85 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>処理中</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/load.css">
+    <!-- <link rel="stylesheet" href="../static/load.css"> -->
+
+    <link rel="icon" href="data:,">
+
+    <title>テスト代行システム Elecitell</title>
 </head>
+
 <body>
+    <header>
+        <a class="logo" href="/">Elecitell</a>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+        </div>
+    </header>
 
-<h2>処理中です…</h2>
+    <div class="content">
+        <div class="stepper">
+            <div class="step completed">
+                <div class="circle">✔</div>
+                <div class="label">入力</div>
+            </div>
 
-<script>
-const params = new URLSearchParams(location.search);
-const username = params.get("username");
+            <div class="line completed"></div>
 
-async function check() {
-  const res = await fetch(
-    "https://server-test-wz67.onrender.com/result?username=" + username
-  );
-  const data = await res.json();
+            <div class="step current">
+                <div class="circle"></div>
+                <div class="label">実行</div>
+            </div>
 
-  if (data.done) {
-    location.href = "/complet.html?result=" + encodeURIComponent(data.result);
-  } else {
-    setTimeout(check, 2000);
-  }
-}
+            <div class="line"></div>
 
-check();
-</script>
+            <div class="step">
+                <div class="circle"></div>
+                <div class="label">完了</div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <div class="loader"></div>
+        <h1>テストを実行中です。完了までしばらくお待ちください...</h1>
+        <div id="statusMessage" style="text-align: center; color: var(--text-main); font-weight: bold; margin-top: 10px;">
+            ステータスを確認しています...</div>
+
+        <script>
+        const params = new URLSearchParams(location.search);
+        const username = params.get("username");
+
+        async function check() {
+            const res = await fetch(
+                "https://server-test-wz67.onrender.com/result?username=" + username
+            );
+            const data = await res.json();
+
+            if (data.done) {
+                location.href = "/complet.html?result=" + encodeURIComponent(data.result);
+            } else {
+                setTimeout(check, 2000);
+            }
+        }
+        </script>
+    </main>
+
+    <footer>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+            <p>(C) Elecitell 2026 ver2.0</p>
+        </div>
+    </footer>
 
 </body>
+
 </html>
