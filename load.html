@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>処理中</title>
+</head>
+<body>
+
+<h2>処理中です…</h2>
+
+<script>
+const params = new URLSearchParams(location.search);
+const username = params.get("username");
+
+async function check() {
+  const res = await fetch(
+    "https://server-test-wz67.onrender.com/result?username=" + username
+  );
+  const data = await res.json();
+
+  if (data.done) {
+    location.href = "/complet.html?result=" + encodeURIComponent(data.result);
+  } else {
+    setTimeout(check, 2000);
+  }
+}
+
+check();
+</script>
+
+</body>
+</html>

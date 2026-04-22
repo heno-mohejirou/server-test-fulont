@@ -1,48 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>パパイヤーヤパパーパパイヤ</title>
+<meta charset="UTF-8">
+<title>入力</title>
 </head>
 <body>
 
-<h2>パパイヤーヤパパーパパイヤ</h2>
+<h2>ログイン</h2>
 
 <input type="text" id="username" placeholder="user">
 <input type="text" id="password" placeholder="pass">
-<button onclick="calc()">送信</button>
-
-<h3 id="result"></h3>
+<button onclick="send()">送信</button>
 
 <script>
-async function calc() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+async function send() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-    const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev/api", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    });
+  const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev/api", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ username, password })
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    console.log(data);
-
-    // 🔥 ここを変更
-    if (data.payment === true) {
-        // 🔥 結果をURLに乗せて遷移
-        window.location.href = "/success.html?result=" + encodeURIComponent(data.result);
-    } else if (data.payment === false) {
-        window.location.href = "/free.html";
-    } else {
-        window.location.href = "/error.html";
-    }
+  if (data.status === "loading") {
+    location.href = "/load.html?username=" + username;
+  } else if (data.status === "congestion") {
+    location.href = "/congestion.html";
+  } else if (data.status === "free") {
+    location.href = "/free.html";
+  } else {
+    location.href = "/error.html";
+  }
 }
 </script>
 

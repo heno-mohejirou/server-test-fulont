@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>完了</title>
+</head>
+<body>
+
+<h2>完了しました</h2>
+<p id="result"></p>
+
+<script>
+const params = new URLSearchParams(location.search);
+const result = params.get("result");
+
+document.getElementById("result").innerText =
+  result ? result : "結果なし";
+</script>
+
+</body>
+</html>
