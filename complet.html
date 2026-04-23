@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="/load.css">
-    <!-- <link rel="stylesheet" href="../static/load.css"> -->
-
     <link rel="icon" href="data:,">
 
     <title>テスト代行システム Elecitell - 完了</title>
@@ -30,6 +28,14 @@
             font-weight: 800;
             color: var(--text-main);
             margin-bottom: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+            word-break: break-all;
         }
 
         @keyframes scaleUp {
@@ -93,14 +99,36 @@
             テストの代行が完了しました
         </div>
 
-        <p style="color: var(--text-muted); margin-bottom: 40px; font-weight: 600;">
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-weight: 600;">
             自動処理が正常に終了しました。結果をご確認ください。
         </p>
 
+        <!-- 🔥 結果表示 -->
+        <div id="result">読み込み中...</div>
+
         <div class="button-wrapper">
-            <a class="Form-Btn" href="/"
-                style="text-align: center; display: block; text-decoration: none;">トップページに戻る</a>
-        </div> 
+            <a class="Form-Btn" href="/" style="text-align: center; display: block; text-decoration: none;">
+                トップページに戻る
+            </a>
+        </div>
+
+        <script>
+            const resultEl = document.getElementById("result");
+
+            // sessionStorageから取得
+            const result = sessionStorage.getItem("result");
+
+            if (result) {
+                // 改行対応
+                resultEl.innerHTML = result.replace(/\n/g, "<br>");
+
+                // 一度表示したら削除（セキュリティ）
+                sessionStorage.removeItem("result");
+
+            } else {
+                resultEl.textContent = "結果が見つかりません";
+            }
+        </script>
     </main>
 
     <footer>

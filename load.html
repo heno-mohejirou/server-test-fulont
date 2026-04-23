@@ -67,8 +67,10 @@
                 const data = await res.json();
 
                 if (data.done) {
-                    // 完了 → 完了ページへ
-                    window.location.href = "/complet.html?result=" + encodeURIComponent(data.result);
+
+                    sessionStorage.setItem("result", data.result);
+
+                    window.location.href = "/complet.html";
 
                 } else {
                     statusMessage.textContent = "処理中です...";
