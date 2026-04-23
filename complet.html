@@ -1,21 +1,116 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>完了</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/load.css">
+    <!-- <link rel="stylesheet" href="../static/load.css"> -->
+
+    <link rel="icon" href="data:,">
+
+    <title>テスト代行システム Elecitell - 完了</title>
+
+    <style>
+        .success-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: scaleUp 0.5s ease;
+        }
+
+        .success-message {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        @keyframes scaleUp {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
+
 <body>
+    <header>
+        <a class="logo" href="/">Elecitell</a>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+        </div>
+    </header>
 
-<h2>完了しました</h2>
-<p id="result"></p>
+    <div class="content">
+        <div class="stepper">
+            <div class="step completed">
+                <div class="circle">✔</div>
+                <div class="label">入力</div>
+            </div>
 
-<script>
-const params = new URLSearchParams(location.search);
-const result = params.get("result");
+            <div class="line completed"></div>
 
-document.getElementById("result").innerText =
-  result ? result : "結果なし";
-</script>
+            <div class="step completed">
+                <div class="circle">✔</div>
+                <div class="label">実行</div>
+            </div>
 
+            <div class="line completed"></div>
+
+            <div class="step current">
+                <div class="circle"></div>
+                <div class="label">完了</div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <div class="success-icon">
+            ✔
+        </div>
+
+        <div class="success-message">
+            テストの代行が完了しました！
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 40px; font-weight: 600;">
+            自動処理が正常に終了しました。結果をご確認ください。
+        </p>
+
+        <div class="button-wrapper">
+            <a class="Form-Btn" href="/"
+                style="text-align: center; display: block; text-decoration: none;">トップページに戻る</a>
+        </div> 
+    </main>
+
+    <footer>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+            <p>(C) Elecitell 2026 ver2.0</p>
+        </div>
+    </footer>
 </body>
+
 </html>
