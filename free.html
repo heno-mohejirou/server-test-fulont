@@ -1,13 +1,87 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>未払い</title>
-</head>
-<body>
 
-<h2>未払いユーザーです</h2>
-<p>支払い後にご利用ください</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .qr {
+        margin: 20px 0;
+    }
+
+    img {
+        width: 200px;
+        height: auto;
+    }
+
+    .note {
+        font-size: 14px;
+        color: #555;
+    }
+    </style>
+
+    <!-- CSS読み込み -->
+    <link rel="stylesheet" href="/term.css">
+    <!-- <link rel="stylesheet" href="../static/term.css"> -->
+
+    <link rel="icon" href="data:,">
+
+    <title>テスト代行システム Elecitell</title>
+</head>
+
+<body>
+    <header>
+        <a class="logo" href="/">Elecitell</a>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="content">
+            <h1 style="text-align: center; margin-bottom: 30px; color: var(--text-main);">お支払いのご案内</h1>
+
+            <p>
+            本サービスの利用料金はPayPay払いのみとなっております。<br>
+            下記のアカウントへ <strong>300円（PayPayマネー）</strong> をお支払いください。
+            </p>
+
+            <div class="qr">
+            <img src="QRimage.png" alt="PayPay QRコード">
+            </div>
+
+            <p>
+            お支払い後、PayPayのメッセージにて<br>
+            <strong>Moodleログイン時に使用するユーザ名</strong>（例：s2X0XX）を送信してください。
+            </p>
+
+            <p>
+            お支払いを確認次第、PayPayのメッセージにて<br>
+            <strong>お支払い完了通知</strong>をお送りします。
+            </p>
+
+            <p class="note">
+            通知後、通常どおりサービスをご利用いただけます。
+            </p>
+
+            <div class="button-wrapper">
+                <a class="Form-Btn" href="/"
+                    style="text-align: center; display: block; text-decoration: none;">同意して戻る</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+            <p>(C) Elecitell 2026 ver2.0</p>
+        </div>
+    </footer>
 
 </body>
+
 </html>
