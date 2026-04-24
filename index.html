@@ -1,46 +1,368 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>入力</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="/test.css">
+    <!-- <link rel="stylesheet" href="../static/test.css"> -->
+
+    <link rel="icon" href="data:,">
+    <title>テスト代行システム Elecitell</title>
 </head>
+
 <body>
 
-<h2>ログイン</h2>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-<input type="text" id="username" placeholder="user">
-<input type="text" id="password" placeholder="pass">
-<button onclick="send()">送信</button>
+            const togglePassword = document.getElementById("togglePassword");
+            const password = document.getElementById("password");
 
-<script>
-async function send() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+            const startBtn = document.getElementById("startBtn");
+            const radioButtons = document.querySelectorAll("input[name='grade']");
+            const usernameInput = document.querySelectorAll(".Form-Item-Input")[0];
+            const passwordInput = document.querySelectorAll(".Form-Item-Input")[1];
+            const policyCheck = document.querySelector(".checkboxItem input");
 
-  console.log("送信開始");
+            // パスワード表示切替
+            togglePassword.addEventListener("click", function () {
+                const isPassword = password.type === "password";
+                password.type = isPassword ? "text" : "password";
+                this.classList.toggle("closed");
+            });
 
-  const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev/api", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ username, password })
-  });
+            function validateForm() {
+                const gradeSelected = [...radioButtons].some(r => r.checked);
+                const testSelected = document.querySelectorAll("#dropdown input[type='checkbox']:checked:not(#selectAll)").length > 0;
+                const usernameFilled = usernameInput.value.trim() !== "";
+                const passwordFilled = passwordInput.value.trim() !== "";
+                const policyChecked = policyCheck.checked;
 
-  console.log("レスポンス受信");
+                const allValid = gradeSelected && testSelected && usernameFilled && passwordFilled && policyChecked;
 
-  const data = await res.json();
-  console.log("data:", data);
+                startBtn.disabled = !allValid;
+            }
 
-  if (data.status === "loading") {
-    location.href = "/load.html?username=" + username;
-  } else if (data.status === "congestion") {
-    location.href = "/congestion.html";
-  } else if (data.status === "free") {
-    location.href = "/free.html";
-  } else {
-    location.href = "/error.html";
-  }
-}
-</script>
+            radioButtons.forEach(r => r.addEventListener("change", validateForm));
+            document.querySelectorAll("#dropdown input").forEach(cb => cb.addEventListener("change", validateForm));
+            usernameInput.addEventListener("input", validateForm);
+            passwordInput.addEventListener("input", validateForm);
+            policyCheck.addEventListener("change", validateForm);
+
+            validateForm();
+
+            // startBtn allows native submit when not disabled
+        });
+    </script>
+
+    <header>
+        <a class="logo" href="/">Elecitell</a>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+        </div>
+    </header>
+
+    <main>
+        <form class="content" method="POST" action="/run" id="testForm">
+
+            <div class="stepper">
+                <div class="step current">
+                    <div class="circle"></div>
+                    <div class="label">入力</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="step">
+                    <div class="circle"></div>
+                    <div class="label">実行</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="step">
+                    <div class="circle"></div>
+                    <div class="label">完了</div>
+                </div>
+            </div>
+
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    <span class="Form-Item-Label-Required">必須</span>学年
+                </p>
+
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="grade" value="0">
+                        <span>２年</span>
+                    </label>
+
+                    <label>
+                        <input type="radio" name="grade" value="1">
+                        <span>３年</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    <span class="Form-Item-Label-Required">必須</span>テスト名
+                </p>
+
+                <div class="multi-select">
+                    <div class="selected-box" id="selectedBox">
+                        <span class="placeholder">先に学年を選択してください</span>
+                    </div>
+
+                    <div class="dropdown" id="dropdown" style="display: none;">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="selectAll">
+                            全選択
+                        </label>
+
+                        <!-- 2年生用の選択肢リスト -->
+                        <div id="sophomore-list" class="test-list" style="display: none;">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- 3年生用の選択肢リスト -->
+                        <div id="junior-list" class="test-list" style="display: none;">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    const selectedBox = document.getElementById("selectedBox");
+                    const dropdown = document.getElementById("dropdown");
+                    const selectAll = document.getElementById("selectAll");
+                    let allCheckboxes = Array.from(dropdown.querySelectorAll("input[type='checkbox']:not(#selectAll)"));
+                    const gradeRadios = document.querySelectorAll("input[name='grade']");
+                    const sophomoreList = document.getElementById("sophomore-list");
+                    const juniorList = document.getElementById("junior-list");
+
+                    // Function to get currently visible checkboxes based on grade
+                    function getVisibleCheckboxes() {
+                        const activeList = sophomoreList.style.display === "block" ? sophomoreList :
+                            (juniorList.style.display === "block" ? juniorList : null);
+                        if (!activeList) return [];
+                        return Array.from(activeList.querySelectorAll("input[type='checkbox']"));
+                    }
+
+                    // Handle grade change
+                    gradeRadios.forEach(radio => {
+                        radio.addEventListener('change', () => {
+                            // Reset selections
+                            allCheckboxes.forEach(cb => cb.checked = false);
+                            selectAll.checked = false;
+
+                            if (radio.value === "0") { // Sophomore
+                                sophomoreList.style.display = "block";
+                                juniorList.style.display = "none";
+                                selectedBox.innerHTML = '<span class="placeholder">選択してください</span>';
+                            } else if (radio.value === "1") { // Junior
+                                sophomoreList.style.display = "none";
+                                juniorList.style.display = "block";
+                                selectedBox.innerHTML = '<span class="placeholder">選択してください</span>';
+                            }
+
+                            // Immediately validate on grade change
+                            if (typeof validateForm === "function") validateForm();
+                        });
+                    });
+
+                    selectedBox.addEventListener("click", () => {
+                        // Prevent opening if no grade is selected
+                        const gradeSelected = Array.from(gradeRadios).some(r => r.checked);
+                        if (!gradeSelected) return;
+
+                        const isOpen = dropdown.style.display === "block";
+                        dropdown.style.display = isOpen ? "none" : "block";
+                        selectedBox.classList.toggle("open", !isOpen);
+                    });
+
+                    allCheckboxes.forEach(cb => {
+                        cb.addEventListener("change", updateSelection);
+                    });
+
+                    selectAll.addEventListener("change", function () {
+                        const visibleCheckboxes = getVisibleCheckboxes();
+                        visibleCheckboxes.forEach(cb => cb.checked = this.checked);
+                        updateSelection();
+                    });
+
+                    function updateSelection() {
+                        selectedBox.innerHTML = "";
+                        const visibleCheckboxes = getVisibleCheckboxes();
+                        const selected = visibleCheckboxes.filter(cb => cb.checked);
+
+                        if (selected.length === 0) {
+                            selectedBox.innerHTML = '<span class="placeholder">選択してください</span>';
+                        }
+
+                        selected.forEach(cb => {
+                            const tag = document.createElement("div");
+                            tag.className = "tag";
+                            tag.innerHTML = `${cb.value} <button type="button">&times;</button>`;
+
+                            tag.querySelector("button").addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                cb.checked = false;
+                                updateSelection();
+                                if (typeof validateForm === "function") validateForm();
+                            });
+
+                            selectedBox.appendChild(tag);
+                        });
+
+                        selectAll.checked = visibleCheckboxes.length > 0 && selected.length === visibleCheckboxes.length;
+                    }
+
+                    // Fetch tests from API and populate the lists
+                    async function loadTests() {
+                        try {
+                            const res = await fetch('/api/tests');
+                            const data = await res.json();
+                            
+                            const sophoList = document.getElementById("sophomore-list");
+                            data.sophomore_tests.forEach(test => {
+                                const label = document.createElement("label");
+                                label.innerHTML = `<input type="checkbox" name="testname" class="checkbox" value="${test}">${test}`;
+                                sophoList.appendChild(label);
+                            });
+
+                            const junList = document.getElementById("junior-list");
+                            data.junior_tests.forEach(test => {
+                                const label = document.createElement("label");
+                                label.innerHTML = `<input type="checkbox" name="testname" class="checkbox" value="${test}">${test}`;
+                                junList.appendChild(label);
+                            });
+
+                            // Re-bind listeners for dynamically added checkboxes
+                            allCheckboxes = Array.from(dropdown.querySelectorAll("input[type='checkbox']:not(#selectAll)"));
+                            allCheckboxes.forEach(cb => {
+                                cb.addEventListener("change", updateSelection);
+                                cb.addEventListener("change", validateForm);
+                            });
+                        } catch (e) {
+                            console.error("Error loading tests:", e);
+                        }
+                    }
+                    
+                    document.addEventListener("DOMContentLoaded", loadTests);
+                </script>
+            </div>
+
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    <span class="Form-Item-Label-Required">必須</span>ユーザ名
+                </p>
+                <input type="text" name="username" class="Form-Item-Input">
+            </div>
+
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    <span class="Form-Item-Label-Required">必須</span>
+                    パスワード
+                </p>
+
+                <div class="password-wrapper">
+                    <input type="password" name="password" class="Form-Item-Input" id="password">
+
+                    <button type="button" class="toggle-password" id="togglePassword">
+                        <svg viewBox="0 0 24 24" class="eye-icon">
+                            <!-- 目の外側 -->
+                            <path d="M2 12C4.5 7 9 4 12 4s7.5 3 10 8c-2.5 5-7 8-10 8s-7.5-3-10-8z" />
+                            <!-- 黒目 -->
+                            <circle cx="12" cy="12" r="3" />
+                            <!-- 閉じる線 -->
+                            <line x1="4" y1="4" x2="20" y2="20" class="eye-slash" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="note">
+                    半角英数字で入力してください
+                </div>
+            </div>
+
+            <label class="checkboxItem">
+                <input type="checkbox" name="policy_agree" value="選択肢1" class="checkbox" checked />
+                プライバシーポリシーに同意する
+            </label>
+
+            <div class="button-wrapper">
+                <button type="submit" class="Form-Btn" id="startBtn">
+                    テスト開始
+                </button>
+            </div>
+
+        </form>
+        
+        <script>
+            document.getElementById("testForm").addEventListener("submit", async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                const payload = {
+                    grade: formData.get("grade"),
+                    testname: formData.getAll("testname"),
+                    username: formData.get("username"),
+                    password: formData.get("password")
+                };
+
+                console.log("送信データ:", payload);
+
+                try {
+                    const res = await fetch("https://my-worker.syousei-syousei-06-25.workers.dev/api", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    console.log("レスポンス受信");
+
+                    const data = await res.json();
+                    console.log("data:", data);
+
+                    // 🔥 statusで分岐
+                    if (data.status === "loading") {
+                        location.href = "/load.html?username=" + payload.username;
+                    } 
+                    else if (data.status === "congestion") {
+                        location.href = "/congestion.html";
+                    } 
+                    else if (data.status === "free") {
+                        location.href = "/free.html";
+                    } 
+                    else {
+                        location.href = "/error.html";
+                    }
+
+                } catch(e) {
+                    console.error(e);
+                    alert("通信エラー: " + e.message);
+                }
+            });
+        </script>
+    </main>
+
+    <footer>
+        <div class="row">
+            <a href="/term" class="menu">利用規約</a>
+            <a href="/policy" class="menu">プライバシーポリシー</a>
+            <a href="/help" class="menu">ヘルプ</a>
+            <p>(C) Elecitell 2026 ver2.0</p>
+        </div>
+    </footer>
 
 </body>
+
 </html>
