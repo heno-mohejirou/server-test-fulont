@@ -225,7 +225,7 @@
                     // Fetch tests from API and populate the lists
                     async function loadTests() {
                         try {
-                            const res = await fetch('/api/tests');
+                            const res = await fetch('https://raw.githubusercontent.com/heno-mohejirou/server-test-fulont/main/tests.json');
                             const data = await res.json();
                             
                             const sophoList = document.getElementById("sophomore-list");
