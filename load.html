@@ -70,7 +70,11 @@
 
                     sessionStorage.setItem("result", data.result);
 
-                    window.location.href = "/complet.html";
+                    if (data.result && (data.result.toLowerCase().includes("error") || data.result.includes("エラー"))) {
+                        window.location.href = "/error.html";
+                    } else {
+                        window.location.href = "/complet.html";
+                    }
 
                 } else {
                     statusMessage.textContent = "処理中です...";
