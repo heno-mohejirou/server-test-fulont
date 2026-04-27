@@ -206,6 +206,14 @@
                         selectedBox.classList.remove("open");
                     }
 
+                    // Event delegation for radio button changes
+                    dropdown.addEventListener("change", (e) => {
+                        if (e.target && e.target.name === "testname") {
+                            updateSelection();
+                            if (typeof validateForm === "function") validateForm();
+                        }
+                    });
+
                     // Fetch tests from API and populate the lists
                     async function loadTests() {
                         try {
@@ -213,25 +221,23 @@
                             const data = await res.json();
                             
                             const sophoList = document.getElementById("sophomore-list");
-                            data.sophomore_tests.forEach(test => {
+                            data.sophomore_tests.forEach((test, idx) => {
                                 const label = document.createElement("label");
-                                label.innerHTML = `<input type="radio" name="testname" class="radio" value="${test}">${test}`;
+                                label.htmlFor = `sopho-${idx}`;
+                                label.innerHTML = `<input type="radio" id="sopho-${idx}" name="testname" class="radio" value="${test}">${test}`;
                                 sophoList.appendChild(label);
                             });
 
                             const junList = document.getElementById("junior-list");
-                            data.junior_tests.forEach(test => {
+                            data.junior_tests.forEach((test, idx) => {
                                 const label = document.createElement("label");
-                                label.innerHTML = `<input type="radio" name="testname" class="radio" value="${test}">${test}`;
+                                label.htmlFor = `jun-${idx}`;
+                                label.innerHTML = `<input type="radio" id="jun-${idx}" name="testname" class="radio" value="${test}">${test}`;
                                 junList.appendChild(label);
                             });
 
-                            // Re-bind listeners for dynamically added radios
-                            allRadios = Array.from(dropdown.querySelectorAll("input[name='testname']"));
-                            allRadios.forEach(cb => {
-                                cb.addEventListener("change", updateSelection);
-                                cb.addEventListener("change", validateForm);
-                            });
+                            // Validate immediately in case layout shifts
+                            if (typeof validateForm === "function") validateForm();
                         } catch (e) {
                             console.error("Error loading tests:", e);
                         }
