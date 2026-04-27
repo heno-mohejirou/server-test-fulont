@@ -35,7 +35,7 @@
 
             function validateForm() {
                 const gradeSelected = [...radioButtons].some(r => r.checked);
-                const testSelected = document.querySelectorAll("#dropdown input[type='checkbox']:checked:not(#selectAll)").length > 0;
+                const testSelected = document.querySelectorAll("#dropdown input[name='testname']:checked").length > 0;
                 const usernameFilled = usernameInput.value.trim() !== "";
                 const passwordFilled = passwordInput.value.trim() !== "";
                 const policyChecked = policyCheck.checked;
@@ -119,11 +119,6 @@
                     </div>
 
                     <div class="dropdown" id="dropdown" style="display: none;">
-                        <label>
-                            <input type="checkbox" class="checkbox" id="selectAll">
-                            全選択
-                        </label>
-
                         <!-- 2年生用の選択肢リスト -->
                         <div id="sophomore-list" class="test-list" style="display: none;">
                             <!-- Populated by JS -->
@@ -139,26 +134,24 @@
                 <script>
                     const selectedBox = document.getElementById("selectedBox");
                     const dropdown = document.getElementById("dropdown");
-                    const selectAll = document.getElementById("selectAll");
-                    let allCheckboxes = Array.from(dropdown.querySelectorAll("input[type='checkbox']:not(#selectAll)"));
+                    let allRadios = [];
                     const gradeRadios = document.querySelectorAll("input[name='grade']");
                     const sophomoreList = document.getElementById("sophomore-list");
                     const juniorList = document.getElementById("junior-list");
 
-                    // Function to get currently visible checkboxes based on grade
-                    function getVisibleCheckboxes() {
+                    // Function to get currently visible radios based on grade
+                    function getVisibleRadios() {
                         const activeList = sophomoreList.style.display === "block" ? sophomoreList :
                             (juniorList.style.display === "block" ? juniorList : null);
                         if (!activeList) return [];
-                        return Array.from(activeList.querySelectorAll("input[type='checkbox']"));
+                        return Array.from(activeList.querySelectorAll("input[name='testname']"));
                     }
 
                     // Handle grade change
                     gradeRadios.forEach(radio => {
                         radio.addEventListener('change', () => {
                             // Reset selections
-                            allCheckboxes.forEach(cb => cb.checked = false);
-                            selectAll.checked = false;
+                            allRadios.forEach(cb => cb.checked = false);
 
                             if (radio.value === "0") { // Sophomore
                                 sophomoreList.style.display = "block";
@@ -185,41 +178,32 @@
                         selectedBox.classList.toggle("open", !isOpen);
                     });
 
-                    allCheckboxes.forEach(cb => {
-                        cb.addEventListener("change", updateSelection);
-                    });
-
-                    selectAll.addEventListener("change", function () {
-                        const visibleCheckboxes = getVisibleCheckboxes();
-                        visibleCheckboxes.forEach(cb => cb.checked = this.checked);
-                        updateSelection();
-                    });
-
                     function updateSelection() {
                         selectedBox.innerHTML = "";
-                        const visibleCheckboxes = getVisibleCheckboxes();
-                        const selected = visibleCheckboxes.filter(cb => cb.checked);
+                        const visibleRadios = getVisibleRadios();
+                        const selected = visibleRadios.find(cb => cb.checked);
 
-                        if (selected.length === 0) {
+                        if (!selected) {
                             selectedBox.innerHTML = '<span class="placeholder">選択してください</span>';
+                            return;
                         }
 
-                        selected.forEach(cb => {
-                            const tag = document.createElement("div");
-                            tag.className = "tag";
-                            tag.innerHTML = `${cb.value} <button type="button">&times;</button>`;
+                        const tag = document.createElement("div");
+                        tag.className = "tag";
+                        tag.innerHTML = `${selected.value} <button type="button">&times;</button>`;
 
-                            tag.querySelector("button").addEventListener("click", (e) => {
-                                e.stopPropagation();
-                                cb.checked = false;
-                                updateSelection();
-                                if (typeof validateForm === "function") validateForm();
-                            });
-
-                            selectedBox.appendChild(tag);
+                        tag.querySelector("button").addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            selected.checked = false;
+                            updateSelection();
+                            if (typeof validateForm === "function") validateForm();
                         });
 
-                        selectAll.checked = visibleCheckboxes.length > 0 && selected.length === visibleCheckboxes.length;
+                        selectedBox.appendChild(tag);
+                        
+                        // Close dropdown on select single item
+                        dropdown.style.display = "none";
+                        selectedBox.classList.remove("open");
                     }
 
                     // Fetch tests from API and populate the lists
@@ -231,20 +215,20 @@
                             const sophoList = document.getElementById("sophomore-list");
                             data.sophomore_tests.forEach(test => {
                                 const label = document.createElement("label");
-                                label.innerHTML = `<input type="checkbox" name="testname" class="checkbox" value="${test}">${test}`;
+                                label.innerHTML = `<input type="radio" name="testname" class="radio" value="${test}">${test}`;
                                 sophoList.appendChild(label);
                             });
 
                             const junList = document.getElementById("junior-list");
                             data.junior_tests.forEach(test => {
                                 const label = document.createElement("label");
-                                label.innerHTML = `<input type="checkbox" name="testname" class="checkbox" value="${test}">${test}`;
+                                label.innerHTML = `<input type="radio" name="testname" class="radio" value="${test}">${test}`;
                                 junList.appendChild(label);
                             });
 
-                            // Re-bind listeners for dynamically added checkboxes
-                            allCheckboxes = Array.from(dropdown.querySelectorAll("input[type='checkbox']:not(#selectAll)"));
-                            allCheckboxes.forEach(cb => {
+                            // Re-bind listeners for dynamically added radios
+                            allRadios = Array.from(dropdown.querySelectorAll("input[name='testname']"));
+                            allRadios.forEach(cb => {
                                 cb.addEventListener("change", updateSelection);
                                 cb.addEventListener("change", validateForm);
                             });
